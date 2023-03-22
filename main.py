@@ -4,7 +4,6 @@ import re
 import argparse
 
 import requests
-# import chromadb
 
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma

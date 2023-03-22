@@ -5,7 +5,7 @@ FROM python:3.8-slim
 COPY requirements.txt .
 RUN apt-get update &&\
     apt-get install --no-install-recommends --yes build-essential
-RUN pip install --upgrade pip
+
 RUN pip install -r requirements.txt
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
