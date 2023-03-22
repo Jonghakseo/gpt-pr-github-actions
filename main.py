@@ -127,7 +127,7 @@ if __name__ == '__main__':
         The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
         Don't tell me the information in the pr's title and body.
         
-        Do not say Sorry.
+        Never say Sorry.
         If you can't figure it out without more information, don't apologize or don't answer.
         """
         review_query = f"""
@@ -144,7 +144,7 @@ if __name__ == '__main__':
         Don't review if you're not sure because you don't have additional information.
         If you see a typo or a better variable name, suggest it.
         
-        Do not say Sorry.
+        Never say Sorry.
         If you can't figure it out without more information, don't apologize or don't answer.
         """
 
