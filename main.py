@@ -22,11 +22,9 @@ parser.add_argument('--openai_temperature', default=0.7,
                     help='Sampling temperature to use. Higher values means the model will take more risks')
 parser.add_argument('--openai_top_p', default=0.8,
                     help='An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.')
-parser.add_argument('--mode', default="files", help='PR interpretation form. Options: files, patch')
 args = parser.parse_args()
 
 os.environ["OPENAI_API_KEY"] = args.openai_api_key
-# os.environ["GITHUB_REPOSITORY"] = os.getenv('GITHUB_REPOSITORY')
 os.environ["GITHUB_PR_ID"] = args.github_pr_id
 os.environ["GITHUB_TOKEN"] = args.github_token
 
@@ -100,15 +98,12 @@ def get_filenames_from_diff(diff_text: str):
 if __name__ == '__main__':
     diff = get_pull_request_diff()
 
-    # with open('test.txt', 'r') as f:
-    #     diff = f.read()
-
     text_splitter = TokenTextSplitter(chunk_size=1000, chunk_overlap=0)
     diff_doc = text_splitter.split_documents(get_plain_text_document(diff))
 
     embeddings = OpenAIEmbeddings()
     vectordb = Chroma.from_documents(diff_doc, embeddings)
-    # vectordb.persist()
+
     top_k = min(len(diff_doc), 4)
     diff_qa = ChatVectorDBChain.from_llm(ChatOpenAI(temperature=0.7, top_p=0.8), vectordb,
                                          return_source_documents=True, top_k_docs_for_context=top_k)
@@ -154,9 +149,9 @@ if __name__ == '__main__':
         title_answer = title_result["answer"]
         review_answer = review_result["answer"]
 
-        # print(f"{file}---------------------------------")
-        # print(title_answer)
-        # print(review_answer)
+        print(f"Review File: {file}")
+        print(f"summary:{title_answer}")
+        print(f"detail:{review_answer}")
 
         reviews.append(
             {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
