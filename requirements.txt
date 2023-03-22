@@ -2,5 +2,4 @@ openai
 chromadb
 langchain~=0.0.118
 tiktoken
-bs4
 requests==2.28.2

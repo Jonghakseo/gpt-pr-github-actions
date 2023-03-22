@@ -1,14 +1,14 @@
 name: PR Review
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
 
 jobs:
   add-auto-review-comment:
     runs-on: ubuntu-latest
     name: ChatGPT review code
     steps:
-      - uses: Jonghakseo/gpt-pr-github-actions@v0.1
+      - uses: Jonghakseo/gpt-pr-github-actions@main
         with:
           openai_api_key: ${{ secrets.openai_api_key }} # Get the OpenAI API key from repository secrets
           github_token: ${{ secrets.GITHUB_TOKEN }} # Get the Github Token from repository secrets
