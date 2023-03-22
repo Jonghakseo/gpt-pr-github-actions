@@ -22,7 +22,6 @@ parser.add_argument('--openai_temperature', default=0.7,
                     help='Sampling temperature to use. Higher values means the model will take more risks')
 parser.add_argument('--openai_top_p', default=0.8,
                     help='An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.')
-parser.add_argument('--mode', default="files", help='PR interpretation form. Options: files, patch')
 args = parser.parse_args()
 
 os.environ["OPENAI_API_KEY"] = args.openai_api_key
@@ -104,7 +103,7 @@ if __name__ == '__main__':
 
     embeddings = OpenAIEmbeddings()
     vectordb = Chroma.from_documents(diff_doc, embeddings)
-    # vectordb.persist()
+
     top_k = min(len(diff_doc), 4)
     diff_qa = ChatVectorDBChain.from_llm(ChatOpenAI(temperature=0.7, top_p=0.8), vectordb,
                                          return_source_documents=True, top_k_docs_for_context=top_k)
@@ -122,7 +121,8 @@ if __name__ == '__main__':
         The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
         The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
         Don't tell me the information in the pr's title and body.
-
+        
+        Never say Sorry.
         If you can't figure it out without more information, don't apologize or don't answer.
         """
         review_query = f"""
@@ -138,6 +138,9 @@ if __name__ == '__main__':
         Don't review comments, documentation, line spacing, etc.
         Don't review if you're not sure because you don't have additional information.
         If you see a typo or a better variable name, suggest it.
+        
+        Never say Sorry.
+        If you can't figure it out without more information, don't apologize or don't answer.
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
@@ -145,6 +148,10 @@ if __name__ == '__main__':
 
         title_answer = title_result["answer"]
         review_answer = review_result["answer"]
+
+        print(f"Review File: {file}")
+        print(f"summary:{title_answer}")
+        print(f"detail:{review_answer}")
 
         reviews.append(
             {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
