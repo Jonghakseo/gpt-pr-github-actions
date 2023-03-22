@@ -122,8 +122,7 @@ if __name__ == '__main__':
         The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
         Don't tell me the information in the pr's title and body.
         
-        Never say Sorry.
-        If you can't figure it out without more information, don't apologize or don't answer.
+        Don't apologize. Do not ask for additional context or files.
         """
         review_query = f"""
         As a code reviewer, please review the {file} code using the following rules.
@@ -139,8 +138,7 @@ if __name__ == '__main__':
         Don't review if you're not sure because you don't have additional information.
         If you see a typo or a better variable name, suggest it.
         
-        Never say Sorry.
-        If you can't figure it out without more information, don't apologize or don't answer.
+        Don't apologize. Do not ask for additional context or files.
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
