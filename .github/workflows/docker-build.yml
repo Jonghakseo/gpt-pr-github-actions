@@ -1,0 +1,20 @@
+name: Docker build
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-latest
+    name: Build docker image
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - run: docker build -f build.Dockerfile . -t image:latest --platform linux/amd64 --no-cache
+
+      - name: Upload image
+        uses: ishworkh/docker-image-artifact-upload@v1
+        with:
+          image: "image:latest"
