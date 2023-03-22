@@ -126,7 +126,8 @@ if __name__ == '__main__':
         The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
         The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
         Don't tell me the information in the pr's title and body.
-
+        
+        Do not say Sorry.
         If you can't figure it out without more information, don't apologize or don't answer.
         """
         review_query = f"""
@@ -142,6 +143,9 @@ if __name__ == '__main__':
         Don't review comments, documentation, line spacing, etc.
         Don't review if you're not sure because you don't have additional information.
         If you see a typo or a better variable name, suggest it.
+        
+        Do not say Sorry.
+        If you can't figure it out without more information, don't apologize or don't answer.
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
