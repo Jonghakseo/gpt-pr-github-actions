@@ -2,7 +2,6 @@ import os
 import platform
 import re
 import argparse
-
 import requests
 
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -16,17 +15,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--openai_api_key', help='Your OpenAI API Key')
 parser.add_argument('--github_token', help='Your Github Token')
 parser.add_argument('--github_pr_id', help='Your Github PR ID')
-parser.add_argument('--openai_model', default="gpt-3.5-turbo",
-                    help='GPT model to use. Options: gpt-3.5-turbo, text-davinci-002, text-babbage-001, text-curie-001, text-ada-001')
-parser.add_argument('--openai_temperature', default=0.7,
-                    help='Sampling temperature to use. Higher values means the model will take more risks')
-parser.add_argument('--openai_top_p', default=0.8,
-                    help='An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.')
-parser.add_argument('--mode', default="files", help='PR interpretation form. Options: files, patch')
+parser.add_argument('--openai_model', default="gpt-3.5-turbo")
+parser.add_argument('--openai_temperature', default=0.7)
+parser.add_argument('--openai_top_p', default=0.8)
+
 args = parser.parse_args()
 
 os.environ["OPENAI_API_KEY"] = args.openai_api_key
-# os.environ["GITHUB_REPOSITORY"] = os.getenv('GITHUB_REPOSITORY')
 os.environ["GITHUB_PR_ID"] = args.github_pr_id
 os.environ["GITHUB_TOKEN"] = args.github_token
 
@@ -73,7 +68,7 @@ def add_review_comments(comments: list):
         'X-GitHub-Api-Version': "2022-11-28"
     }
     data = {
-        'body': "This is Auto Review by GPT 3.5-turbo",
+        'body': "This is Auto Review",
         'event': "COMMENT",
         'comments': comments,
     }
@@ -149,10 +144,6 @@ if __name__ == '__main__':
 
         title_answer = title_result["answer"]
         review_answer = review_result["answer"]
-
-        # print(f"{file}---------------------------------")
-        # print(title_answer)
-        # print(review_answer)
 
         reviews.append(
             {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
