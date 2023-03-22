@@ -149,7 +149,9 @@ if __name__ == '__main__':
 
         print(f"Review File: {file}")
         print(f"summary:{title_answer}")
+        print(f"summary context:{title_answer['source_documents']}")
         print(f"detail:{review_answer}")
+        print(f"detail context:{review_answer['source_documents']}")
 
         reviews.append(
             {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
