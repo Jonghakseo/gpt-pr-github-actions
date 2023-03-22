@@ -27,7 +27,6 @@ parser.add_argument('--mode', default="files", help='PR interpretation form. Opt
 args = parser.parse_args()
 
 os.environ["OPENAI_API_KEY"] = args.openai_api_key
-# os.environ["GITHUB_REPOSITORY"] = os.getenv('GITHUB_REPOSITORY')
 os.environ["GITHUB_PR_ID"] = args.github_pr_id
 os.environ["GITHUB_TOKEN"] = args.github_token
 
@@ -101,9 +100,6 @@ def get_filenames_from_diff(diff_text: str):
 if __name__ == '__main__':
     diff = get_pull_request_diff()
 
-    # with open('test.txt', 'r') as f:
-    #     diff = f.read()
-
     text_splitter = TokenTextSplitter(chunk_size=1000, chunk_overlap=0)
     diff_doc = text_splitter.split_documents(get_plain_text_document(diff))
 
@@ -150,10 +146,6 @@ if __name__ == '__main__':
 
         title_answer = title_result["answer"]
         review_answer = review_result["answer"]
-
-        # print(f"{file}---------------------------------")
-        # print(title_answer)
-        # print(review_answer)
 
         reviews.append(
             {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
