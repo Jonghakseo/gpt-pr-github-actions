@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     name: ChatGPT review code
     steps:
-      - uses: Jonghakseo/gpt-pr-github-actions@v0.3
+      - uses: Jonghakseo/gpt-pr-github-actions@main # This is example. use Jonghakseo/gpt-pr-github-actions@v1
         with:
           openai_api_key: ${{ secrets.openai_api_key }} # Get the OpenAI API key from repository secrets
           github_token: ${{ secrets.GITHUB_TOKEN }} # Get the Github Token from repository secrets
