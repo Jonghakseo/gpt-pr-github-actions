@@ -6,7 +6,5 @@ RUN apt-get update &&\
 
 RUN pip install -r requirements.txt
 
-COPY entrypoint.sh /entrypoint.sh
-COPY main.py /main.py
 # docker build -f build.Dockerfile . -t unqocn/gpt-pr-github-actions:version --platform linux/amd64
 # docker push unqocn/gpt-pr-github-actions:version
