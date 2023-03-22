@@ -1,4 +1,4 @@
-# action.yml
+# action.yml?
 name: 'Pull Request with ChatGPT'
 description: 'Auto pull request code review with ChatGPT.'
 inputs:
