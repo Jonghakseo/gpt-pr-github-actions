@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - run: docker build -f build.Dockerfile . -t image:latest --platform linux/amd64 --no-cache
+      - run: docker build -f build.Dockerfile . -t image:latest
 
       - name: Upload image
         uses: ishworkh/docker-image-artifact-upload@v1
