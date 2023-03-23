@@ -104,31 +104,21 @@ if __name__ == '__main__':
     reviews = []
     for file in filenames:
         title_query = f"""
-        Please summarize the changes to file {file} in one line.
-        """
-        review_query = f"""
-        As a code reviewer, please review the {file} file and tell us where it could be improved based on the diff.
+        Please summarize the changes to file {file} in one line. 
+        And let us know if there's anything we can improve. 
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
-        review_result = diff_qa({"question": review_query, "chat_history": []})
 
         title_answer = title_result["answer"]
         title_source = title_result["source_documents"]
 
-        review_answer = review_result["answer"]
-        review_source = review_result["source_documents"]
-
         print(f"Review File: {file}")
 
         print(f"summary:{title_answer}")
-        # print(f"summary source:{title_source}")
-
-        print(f"detail:{review_answer}")
-        # print(f"detail source:{review_source}")
 
         reviews.append(
-            {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
+            {"path": file, "body": f"### Review\n{title_answer}",
              "position": 1})
 
     add_review_comments(reviews)
