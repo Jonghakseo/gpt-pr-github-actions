@@ -52,22 +52,6 @@ def get_pull_request_diff():
 
     return response.text
 
-
-def get_pull_request_info():
-    url = f"https://api.github.com/repos/{repository}/pulls/{pr_id}"
-
-    headers = {
-        'Authorization': f"token {gh_token}",
-    }
-
-    response = requests.request("GET", url, headers=headers)
-
-    if response.status_code != 200:
-        raise Exception(response.text)
-
-    return response.json()
-
-
 def add_review_comments(comments: list):
     url = f"https://api.github.com/repos/{repository}/pulls/{pr_id}/reviews"
 
@@ -117,56 +101,24 @@ if __name__ == '__main__':
 
     filenames = get_filenames_from_diff(diff)
 
-    pr_info = get_pull_request_info()
-    pr_title = pr_info['title']
-    pr_body = pr_info['body']
-
     reviews = []
     for file in filenames:
         title_query = f"""
-        {file} file and describe in one line what has changed.
-        The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
-        The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
-        Don't tell me the information in the pr's title and body.
-
-        Don't apologize. Do not ask for additional context or files.
-        """
-        review_query = f"""
-        As a code reviewer, please review the {file} code using the following rules.
-        The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
-        The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
-        Don't tell me the information in the pr's title and body.
-
-        If this file was deleted, skip this review.
-
-        Please tell us 3 things we should improve in this code, along with specific ways to improve it.
-        Don't give me a vague or abstract review.
-        Don't review comments, documentation, line spacing, etc.
-        Don't review if you're not sure because you don't have additional information.
-        If you see a typo or a better variable name, suggest it.
-
-        Don't apologize. Do not ask for additional context or files.
+        Please summarize the changes to file {file} in one line. 
+        And let us know if there's anything we can improve. 
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
-        review_result = diff_qa({"question": review_query, "chat_history": []})
 
         title_answer = title_result["answer"]
         title_source = title_result["source_documents"]
 
-        review_answer = review_result["answer"]
-        review_source = review_result["source_documents"]
-
         print(f"Review File: {file}")
 
         print(f"summary:{title_answer}")
-        # print(f"summary source:{title_source}")
-
-        print(f"detail:{review_answer}")
-        # print(f"detail source:{review_source}")
 
         reviews.append(
-            {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
+            {"path": file, "body": f"### Review\n{title_answer}",
              "position": 1})
 
     add_review_comments(reviews)
