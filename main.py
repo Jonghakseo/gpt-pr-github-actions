@@ -141,10 +141,12 @@ if __name__ == '__main__':
         {file} file and describe in one line what has changed.
         """
         review_query = f"""
-        As a code reviewer, please review the {file} code using the following rules.
+        As a code reviewer, please review only the code changes in the {file}.
+        Please follow the rules below.
 
         If this file was deleted, skip this review.
 
+        Don't review code before the change. Only review changes made after the change.
         Please tell us 3 things we should improve in this code, along with specific ways to improve it.
         Don't give me a vague or abstract review.
         Don't review comments, documentation, line spacing, etc.
