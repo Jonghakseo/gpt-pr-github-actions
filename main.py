@@ -120,33 +120,27 @@ if __name__ == '__main__':
     reviews = []
     for file in filenames:
         title_query = f"""
+        {file} file and describe in one line what has changed.
         The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
         The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
         Don't tell me the information in the pr's title and body.
-        
-        {file} file and describe in one line what has changed.
-        
+
         Don't apologize. Do not ask for additional context or files.
         """
         review_query = f"""
+        As a code reviewer, please review the {file} code using the following rules.
         The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
         The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
         Don't tell me the information in the pr's title and body.
-        
-        As a code reviewer, please review only the code changes in the {file}.
 
-        Please follow the rules below.
-        
-        ------------
-        
         If this file was deleted, skip this review.
-        Don't review code before the change. Only review changes made after the change.
+
         Please tell us 3 things we should improve in this code, along with specific ways to improve it.
         Don't give me a vague or abstract review.
         Don't review comments, documentation, line spacing, etc.
         Don't review if you're not sure because you don't have additional information.
         If you see a typo or a better variable name, suggest it.
-        
+
         Don't apologize. Do not ask for additional context or files.
         """
 
