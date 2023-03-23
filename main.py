@@ -29,6 +29,9 @@ parser.add_argument('--openai_top_p', default=0.8,
                     help='An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.')
 args = parser.parse_args()
 
+os.environ["OPENAI_TOP_P"] = args.openai_top_p
+os.environ["OPENAI_TEMPERATURE"] = args.openai_temperature
+os.environ["OPENAI_MODEL"] = args.openai_model
 os.environ["OPENAI_API_KEY"] = args.openai_api_key
 os.environ["GITHUB_PR_ID"] = args.github_pr_id
 os.environ["GITHUB_TOKEN"] = args.github_token
@@ -127,11 +130,16 @@ if __name__ == '__main__':
         HumanMessagePromptTemplate.from_template("{question}")
     ]
     prompt = ChatPromptTemplate.from_messages(messages)
+    chat_open_ai = ChatOpenAI(temperature=os.getenv("OPENAI_TEMPERATURE"),
+                              model=os.getenv("OPENAI_MODEL"), top_p=os.getenv("OPENAI_TOP_P"))
 
     top_k = min(len(diff_doc), 4)
-    diff_qa = ChatVectorDBChain.from_llm(ChatOpenAI(temperature=0.7, top_p=0.8), vectordb,
-                                         return_source_documents=True, top_k_docs_for_context=top_k,
-                                         qa_prompt=prompt)
+    diff_qa = ChatVectorDBChain.from_llm(
+        chat_open_ai,
+        vectordb,
+        return_source_documents=True,
+        top_k_docs_for_context=top_k,
+        qa_prompt=prompt)
 
     filenames = get_filenames_from_diff(diff)
 
@@ -167,7 +175,7 @@ if __name__ == '__main__':
 
         print(f"summary:{title_answer}")
         print(f"summary source:{title_source}")
-        
+
         print(f"detail:{review_answer}")
         print(f"detail source:{review_source}")
 
