@@ -24,8 +24,8 @@ parser.add_argument('--openai_top_p', default=0.8,
                     help='An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.')
 args = parser.parse_args()
 
-top_p = int(args.openai_top_p)
-temperature = int(args.openai_temperature)
+top_p = float(args.openai_top_p)
+temperature = float(args.openai_temperature)
 model = args.openai_model
 pr_id = args.github_pr_id
 gh_token = args.github_token
