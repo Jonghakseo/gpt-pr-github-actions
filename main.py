@@ -124,28 +124,19 @@ if __name__ == '__main__':
     reviews = []
     for file in filenames:
         title_query = f"""
-        {file} file and describe in one line what has changed.
-        The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
-        The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
-        Don't tell me the information in the pr's title and body.
-
-        Don't apologize. Do not ask for additional context or files.
+        Please summarize the changes to file {file} in one line.
         """
         review_query = f"""
-        As a code reviewer, please review the {file} code using the following rules.
-        The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
-        The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
-        Don't tell me the information in the pr's title and body.
+        As a code reviewer, please review the following based on the {file} diff.
 
-        If this file was deleted, skip this review.
-
-        Please tell us 3 things we should improve in this code, along with specific ways to improve it.
-        Don't give me a vague or abstract review.
+        If the file has been deleted, you do not need to review it.
+        Tell us what you think could be improved in this code, with specifics on how to improve it.
+        Don't give vague or abstract reviews.
+        Comments or documentation, 
         Don't review comments, documentation, line spacing, etc.
         Don't review if you're not sure because you don't have additional information.
         If you see a typo or a better variable name, suggest it.
-
-        Don't apologize. Do not ask for additional context or files.
+        Do not ask for additional context or files.
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
