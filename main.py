@@ -145,13 +145,18 @@ if __name__ == '__main__':
         review_result = diff_qa({"question": review_query, "chat_history": []})
 
         title_answer = title_result["answer"]
+        title_source = title_result["source_documents"]
+
         review_answer = review_result["answer"]
+        review_source = review_result["source_documents"]
 
         print(f"Review File: {file}")
+
         print(f"summary:{title_answer}")
-        print(f"summary context:{title_answer.source_documents}")
+        print(f"summary source:{title_source}")
+        
         print(f"detail:{review_answer}")
-        print(f"detail context:{review_answer.source_documents}")
+        print(f"detail source:{review_source}")
 
         reviews.append(
             {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
