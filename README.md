@@ -2,6 +2,9 @@
 
 GPT-PR-GitHub-Action is a GitHub Action that uses ChatGPT to perform code reviews on pull requests. This action can help you to automate the code review process and improve the quality of your code.
 
+To use this action, you need to have a openai API key. You can get one by signing up for an account at [https://platform.openai.com/account](https://platform.openai.com/account).
+
+
 ### Inputs
 
 This action requires the following inputs:
@@ -45,8 +48,6 @@ jobs:
 
 - The quality of code reviews using chatGPT is not guaranteed and should not be relied upon in its entirety.
 - If insufficient context is provided, the review may be unsuccessful.
-
-To use this action, you need to have a openai API key. You can get one by signing up for an account at [https://platform.openai.com/account](https://platform.openai.com/account).
 
 
 ## Contributing
