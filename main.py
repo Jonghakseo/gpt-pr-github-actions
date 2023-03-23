@@ -11,6 +11,11 @@ from langchain.text_splitter import TokenTextSplitter
 from langchain.chains import ChatVectorDBChain
 from langchain.docstore.document import Document
 from langchain.chat_models import ChatOpenAI
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--openai_api_key', help='Your OpenAI API Key')
@@ -98,37 +103,45 @@ def get_filenames_from_diff(diff_text: str):
 if __name__ == '__main__':
     diff = get_pull_request_diff()
 
+    pr_info = get_pull_request_info()
+    pr_title = pr_info['title']
+    pr_body = pr_info['body']
+
     text_splitter = TokenTextSplitter(chunk_size=1000, chunk_overlap=0)
     diff_doc = text_splitter.split_documents(get_plain_text_document(diff))
 
     embeddings = OpenAIEmbeddings()
     vectordb = Chroma.from_documents(diff_doc, embeddings)
 
+    system_template = f"""
+    The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
+    The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
+    
+    Don't tell me the information in the pr's title and body.
+    Don't apologize. Do not ask for additional context or files.
+    If you don't know the answer, just say that you don't know, don't try to make up an answer.
+    ----------------
+    """
+    messages = [
+        SystemMessagePromptTemplate.from_template(system_template),
+        HumanMessagePromptTemplate.from_template("{question}")
+    ]
+    prompt = ChatPromptTemplate.from_messages(messages)
+
     top_k = min(len(diff_doc), 4)
     diff_qa = ChatVectorDBChain.from_llm(ChatOpenAI(temperature=0.7, top_p=0.8), vectordb,
-                                         return_source_documents=True, top_k_docs_for_context=top_k)
+                                         return_source_documents=True, top_k_docs_for_context=top_k,
+                                         qa_prompt=prompt)
 
     filenames = get_filenames_from_diff(diff)
-
-    pr_info = get_pull_request_info()
-    pr_title = pr_info['title']
-    pr_body = pr_info['body']
 
     reviews = []
     for file in filenames:
         title_query = f"""
         {file} file and describe in one line what has changed.
-        The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
-        The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
-        Don't tell me the information in the pr's title and body.
-        
-        Don't apologize. Do not ask for additional context or files.
         """
         review_query = f"""
         As a code reviewer, please review the {file} code using the following rules.
-        The changes in this file are changes to a pull request. First, we'll give you the title and body of the pull request.
-        The title is {pr_title}. The body is {pr_body}`. Use the information in the title and body to figure out the code.
-        Don't tell me the information in the pr's title and body.
 
         If this file was deleted, skip this review.
 
@@ -137,8 +150,6 @@ if __name__ == '__main__':
         Don't review comments, documentation, line spacing, etc.
         Don't review if you're not sure because you don't have additional information.
         If you see a typo or a better variable name, suggest it.
-        
-        Don't apologize. Do not ask for additional context or files.
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
