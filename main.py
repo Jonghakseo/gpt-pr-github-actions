@@ -24,22 +24,24 @@ parser.add_argument('--openai_top_p', default=0.8,
                     help='An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.')
 args = parser.parse_args()
 
-os.environ["OPENAI_TOP_P"] = args.openai_top_p
-os.environ["OPENAI_TEMPERATURE"] = args.openai_temperature
-os.environ["OPENAI_MODEL"] = args.openai_model
+top_p = float(args.openai_top_p)
+temperature = float(args.openai_temperature)
+model = args.openai_model
+pr_id = args.github_pr_id
+gh_token = args.github_token
+
+repository = os.getenv('GITHUB_REPOSITORY')
 os.environ["OPENAI_API_KEY"] = args.openai_api_key
-os.environ["GITHUB_PR_ID"] = args.github_pr_id
-os.environ["GITHUB_TOKEN"] = args.github_token
 
 print('Python: ', platform.python_version())
 
 
 def get_pull_request_diff():
-    url = f"https://api.github.com/repos/{os.getenv('GITHUB_REPOSITORY')}/pulls/{os.getenv('GITHUB_PR_ID')}"
+    url = f"https://api.github.com/repos/{repository}/pulls/{pr_id}"
     print(url)
 
     headers = {
-        'Authorization': f"token {os.getenv('GITHUB_TOKEN')}",
+        'Authorization': f"token {gh_token}",
         'Accept': 'application/vnd.github.v3.diff'
     }
 
@@ -52,10 +54,10 @@ def get_pull_request_diff():
 
 
 def get_pull_request_info():
-    url = f"https://api.github.com/repos/{os.getenv('GITHUB_REPOSITORY')}/pulls/{os.getenv('GITHUB_PR_ID')}"
+    url = f"https://api.github.com/repos/{repository}/pulls/{pr_id}"
 
     headers = {
-        'Authorization': f"token {os.getenv('GITHUB_TOKEN')}",
+        'Authorization': f"token {gh_token}",
     }
 
     response = requests.request("GET", url, headers=headers)
@@ -67,14 +69,14 @@ def get_pull_request_info():
 
 
 def add_review_comments(comments: list):
-    url = f"https://api.github.com/repos/{os.getenv('GITHUB_REPOSITORY')}/pulls/{os.getenv('GITHUB_PR_ID')}/reviews"
+    url = f"https://api.github.com/repos/{repository}/pulls/{pr_id}/reviews"
 
     headers = {
-        'Authorization': f"token {os.getenv('GITHUB_TOKEN')}",
+        'Authorization': f"token {gh_token}",
         'X-GitHub-Api-Version': "2022-11-28"
     }
     data = {
-        'body': "This is Auto Review by GPT 3.5-turbo",
+        'body': f"This is Auto Review by {model}",
         'event': "COMMENT",
         'comments': comments,
     }
@@ -108,8 +110,10 @@ if __name__ == '__main__':
     vectordb = Chroma.from_documents(diff_doc, embeddings)
 
     top_k = min(len(diff_doc), 4)
-    diff_qa = ChatVectorDBChain.from_llm(ChatOpenAI(temperature=0.7, top_p=0.8), vectordb,
-                                         return_source_documents=True, top_k_docs_for_context=top_k)
+    diff_qa = ChatVectorDBChain.from_llm(
+        ChatOpenAI(temperature=temperature, top_p=top_p, model=model),
+        vectordb,
+        return_source_documents=True, top_k_docs_for_context=top_k)
 
     filenames = get_filenames_from_diff(diff)
 
@@ -156,10 +160,10 @@ if __name__ == '__main__':
         print(f"Review File: {file}")
 
         print(f"summary:{title_answer}")
-        print(f"summary source:{title_source}")
+        # print(f"summary source:{title_source}")
 
         print(f"detail:{review_answer}")
-        print(f"detail source:{review_source}")
+        # print(f"detail source:{review_source}")
 
         reviews.append(
             {"path": file, "body": f"### Review\n{title_answer}\n\n**Detail**\n{review_answer}",
