@@ -52,22 +52,6 @@ def get_pull_request_diff():
 
     return response.text
 
-
-def get_pull_request_info():
-    url = f"https://api.github.com/repos/{repository}/pulls/{pr_id}"
-
-    headers = {
-        'Authorization': f"token {gh_token}",
-    }
-
-    response = requests.request("GET", url, headers=headers)
-
-    if response.status_code != 200:
-        raise Exception(response.text)
-
-    return response.json()
-
-
 def add_review_comments(comments: list):
     url = f"https://api.github.com/repos/{repository}/pulls/{pr_id}/reviews"
 
@@ -116,10 +100,6 @@ if __name__ == '__main__':
         return_source_documents=True, top_k_docs_for_context=top_k)
 
     filenames = get_filenames_from_diff(diff)
-
-    pr_info = get_pull_request_info()
-    pr_title = pr_info['title']
-    pr_body = pr_info['body']
 
     reviews = []
     for file in filenames:
