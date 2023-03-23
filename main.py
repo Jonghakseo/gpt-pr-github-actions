@@ -127,16 +127,7 @@ if __name__ == '__main__':
         Please summarize the changes to file {file} in one line.
         """
         review_query = f"""
-        As a code reviewer, please review the following based on the {file} diff.
-
-        If the file has been deleted, you do not need to review it.
-        Tell us what you think could be improved in this code, with specifics on how to improve it.
-        Don't give vague or abstract reviews.
-        Comments or documentation, 
-        Don't review comments, documentation, line spacing, etc.
-        Don't review if you're not sure because you don't have additional information.
-        If you see a typo or a better variable name, suggest it.
-        Do not ask for additional context or files.
+        As a code reviewer, please review the {file} file and tell us where it could be improved based on the diff.
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
