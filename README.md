@@ -57,3 +57,9 @@ If you find any issues or have suggestions for improvements, feel free to open a
 ## License
 
 This project is licensed under the MIT License.
+
+## Inspired By
+
+- https://github.com/cirolini/chatgpt-github-actions
+- https://txt.cohere.ai/text-embeddings/
+- https://blog.devgenius.io/chat-with-document-s-using-openai-chatgpt-api-and-text-embedding-6a0ce3dc8bc8
