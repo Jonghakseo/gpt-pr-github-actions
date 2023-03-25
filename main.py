@@ -104,8 +104,7 @@ if __name__ == '__main__':
     reviews = []
     for file in filenames:
         title_query = f"""
-        Please summarize the changes to file {file} in one line. 
-        And let us know if there's anything we can improve. 
+        View the changes to the code in file {file}, and find and suggest areas where it could be improved. 
         """
 
         title_result = diff_qa({"question": title_query, "chat_history": []})
