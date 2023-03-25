@@ -1,4 +1,10 @@
-FROM unqocn/gpt-pr-github-actions:1.0-linux-amd
+FROM python:3.8-slim
+
+COPY requirements.txt .
+RUN apt-get update &&\
+    apt-get install --no-install-recommends --yes build-essential
+
+RUN pip install -r requirements.txt
 
 COPY entrypoint.sh /entrypoint.sh
 COPY main.py /main.py

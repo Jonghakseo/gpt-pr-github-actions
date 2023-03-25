@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
         print(f"Review File: {file}")
 
-        print(f"summary:{title_answer}")
+        print(f"{title_answer}")
 
         reviews.append(
             {"path": file, "body": f"### Review\n{title_answer}",
